@@ -30,9 +30,16 @@ export function useSyncUserFromThirdweb() {
       const userRes = await getUserByEmail(email);
       if (!userRes.success) throw new Error("Error getting user from Supabase");
 
-      // If found, set in Zustand
-      if (userRes.data.wallet) {
-        setUser(email, userRes.data.wallet);
+      const user = userRes.data;
+
+      // If user found, set in Zustand
+      if (user.wallet) {
+        setUser(
+          email,
+          user.wallet,
+          user.username || null,
+          user.profile_image || null
+        );
       } else {
         // fallback: use wallet from connected account
         setUser(email, wallet);

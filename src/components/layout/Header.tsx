@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useActiveWallet, useDisconnect } from "thirdweb/react";
 import { useUser } from "@/hooks/useUser";
 import { ThirdwebConnectButton } from "../auth/ThirdwebConnectButton";
-import { toast } from "react-toastify";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import UserDropdown from "./UserDropdown";
 
 export default function Header() {
   const router = useRouter();
@@ -13,25 +13,6 @@ export default function Header() {
   const wallet = useActiveWallet();
   const { clearUser } = useUser();
   const { toggleSidebar } = useSidebarState();
-
-  const handleSignOut = async () => {
-    try {
-      // 1. Disconnect wallet
-      if (wallet) await disconnect(wallet);
-
-      // 2. Clear Zustand store
-      clearUser();
-
-      // 3. Remove auth cookie
-      await fetch("/api/auth/session", { method: "DELETE" });
-
-      // 4. Redirect to Sign In page
-      router.push("/signin");
-    } catch (error) {
-      console.error("Error during sign out:", error);
-      toast.error("Sign out failed");
-    }
-  };
 
   return (
     <header className="flex items-center justify-between sm:justify-end h-[88px] bg-[#050505] border-b border-[#191919] px-4 sm:px-6">
@@ -78,13 +59,15 @@ export default function Header() {
           </svg>
         </button> */}
 
+        {/* User Drop Down */}
+        <UserDropdown />
         {/* Sign Out Button */}
-        <button
+        {/* <button
           onClick={handleSignOut}
           className="rounded-md bg-[#191919] px-4 py-2 text-sm text-[#C1C1C1] hover:bg-[#2B2B2B] transition"
         >
           Sign Out
-        </button>
+        </button> */}
 
         {/* Hidden button to ensure Thirdweb context hydration */}
         <span className="hidden">
