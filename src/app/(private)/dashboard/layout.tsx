@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useSyncUserFromThirdweb } from "@/hooks/useSyncUserFromThirdweb";
-import { ThirdwebConnectButton } from "@/components/auth/ThirdwebConnectButton";
+import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
 
 export default function DashboardLayout({
   children,
@@ -31,12 +32,12 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Hidden button to ensure Thirdweb context hydration */}
-      <span className="hidden">
-        <ThirdwebConnectButton />
-      </span>
-      {children}
+    <div className="flex bg-black text-white min-h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-1 sm:ml-[152px]">
+        <Header />
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }
