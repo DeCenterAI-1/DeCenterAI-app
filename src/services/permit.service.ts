@@ -89,8 +89,6 @@ export async function preparePermitPayload(
       deadline: deadline.toString(),
     };
 
-    console.debug("Prepared Permit payload", domain, types, message);
-
     return { domain, permitTypes: types, permitMessage: message };
   } catch (error) {
     console.error("Error in prepare permit payload:", error);
@@ -114,8 +112,6 @@ export async function signPermitPayload(
       primaryType: "Permit",
       message,
     });
-
-    console.debug("Permit signature", signature);
 
     return signature;
   } catch (error) {

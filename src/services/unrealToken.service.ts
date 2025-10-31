@@ -3,7 +3,7 @@
 import { getContract, prepareContractCall, sendTransaction } from "thirdweb";
 import { privateKeyToAccount } from "thirdweb/wallets";
 import { client } from "@/lib/thirdweb";
-import { titanAITestnet, titanAITestnetConfig } from "@/utils/chains";
+import { activeChain, activeChainConfig } from "@/utils/chains";
 
 // Load private key of your treasury wallet
 const treasuryPrivateKey = process.env.TREASURY_PRIVATE_KEY!;
@@ -17,12 +17,12 @@ export async function sendWelcomeTokens(toWallet: string, amount: number) {
     // Get the Unreal token contract (ERC20)
     const contract = getContract({
       client,
-      chain: titanAITestnet,
-      address: titanAITestnetConfig.custom.tokens.UnrealToken.address,
+      chain: activeChain,
+      address: activeChainConfig.custom.tokens.UnrealToken.address,
     });
 
     // ERC20 usually has 18 decimals → convert to base units
-    const decimals = titanAITestnetConfig.custom.tokens.UnrealToken.decimals;
+    const decimals = activeChainConfig.custom.tokens.UnrealToken.decimals;
     const value = BigInt(amount) * BigInt(10 ** decimals);
 
     // Prepare transfer

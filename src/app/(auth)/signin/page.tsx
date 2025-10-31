@@ -42,7 +42,6 @@ export default function SignInPage() {
       const userRes = await getOrCreateUser(email, address);
 
       // Send welcome Unreal Token to new user
-      console.debug("Auth User", userRes);
       if (userRes.isNewUser) {
         const welcomeTokensRes = await sendWelcomeTokens(
           address,
@@ -57,7 +56,6 @@ export default function SignInPage() {
       }
 
       // Store in Zustand
-      console.debug("userRes", userRes);
       setUser(userRes.data.id, email, address);
 
       await fetch("/api/auth/session", {

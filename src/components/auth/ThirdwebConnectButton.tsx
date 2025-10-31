@@ -1,5 +1,6 @@
 import { client } from "@/lib/thirdweb";
 import {
+  activeChain,
   titanAITestnet,
   titanAITestnetConfig,
   torusMainnet,
@@ -27,7 +28,7 @@ export function ThirdwebConnectButton() {
       connectButton={{ label: "Sign-In" }}
       connectModal={{ showThirdwebBranding: true, size: "wide" }}
       theme={"dark"}
-      chain={titanAITestnet}
+      chain={activeChain}
       supportedTokens={{
         [titanAITestnet.id]: [
           {

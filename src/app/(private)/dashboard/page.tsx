@@ -7,7 +7,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import { useUser } from "@/hooks/useUser";
 import { client } from "@/lib/thirdweb";
 import { fetchTokenBalance } from "@/services/thirdweb.service";
-import { getChainConfigById, titanAITestnet } from "@/utils/chains";
+import { getChainConfigById, activeChain } from "@/utils/chains";
 import { CloudArrowDown, Key, Pulse } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const [apiKeysCount, setApiKeysCount] = useState<number>(0);
   const [networkStatus, setNetworkStatus] = useState<string>("loading...");
 
-  const chainConfig = getChainConfigById(titanAITestnet.id);
+  const chainConfig = getChainConfigById(activeChain.id);
   const unrealTokenAddress = chainConfig?.custom?.tokens?.UnrealToken?.address;
 
   // Fetch Unreal token balance
@@ -27,7 +27,7 @@ export default function DashboardPage() {
     try {
       const balance = await fetchTokenBalance(
         wallet,
-        titanAITestnet,
+        activeChain,
         client,
         unrealTokenAddress
       );
