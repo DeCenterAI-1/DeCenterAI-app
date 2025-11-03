@@ -28,23 +28,19 @@ export function useSyncUserFromThirdweb() {
 
       // Fetch user info from Supabase
       const userRes = await getUserByEmail(email);
-      if (!userRes.success) throw new Error("Error getting user from Supabase");
+      if (!userRes.success)
+        throw new Error(userRes.message || "Error getting user from Supabase");
 
       const user = userRes.data;
 
-      // If user found, set in Zustand
-      if (user.wallet) {
-        setUser(
-          user.id,
-          email,
-          user.wallet,
-          user.username || null,
-          user.profile_image || null
-        );
-      } else {
-        // fallback: use wallet from connected account
-        setUser(0, email, wallet);
-      }
+      // Set user in Zustand
+      setUser(
+        user.id,
+        email,
+        user.wallet || wallet,
+        user.username || null,
+        user.profile_image || null
+      );
     } catch (error) {
       console.error("Error syncing user:", error);
       clearUser();
