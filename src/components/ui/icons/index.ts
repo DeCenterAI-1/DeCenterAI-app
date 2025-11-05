@@ -3,3 +3,4 @@ export * from "./IconAPIs";
 export * from "./IconPlayground";
 export * from "./IconSettings";
 export * from "./BinIcon";
+export * from "./IconBilling";

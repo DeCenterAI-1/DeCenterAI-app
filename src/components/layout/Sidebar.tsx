@@ -7,6 +7,7 @@ import {
   IconDashbaord,
   IconPlayground,
   IconSettings,
+  IconBilling,
 } from "@/components/ui/icons";
 import Link from "next/link";
 import { useSidebarState } from "@/hooks/useSidebarState";
@@ -20,6 +21,7 @@ const navigationItems = [
     href: "/dashboard/playground",
     icon: <IconPlayground />,
   },
+  { name: "Billing", href: "/dashboard/billing", icon: <IconBilling /> },
   { name: "Settings", href: "/dashboard/settings", icon: <IconSettings /> },
 ];
 
