@@ -1,6 +1,8 @@
 import {
   amoyTestnet,
   amoyTestnetConfig,
+  somniaShanonTestnet,
+  somniaShanonTestnetConfig,
   titanAITestnet,
   titanAITestnetConfig,
   torusMainnet,
@@ -18,6 +20,9 @@ export function getPaymentTokenAddress(chainId: number): string {
 
     case amoyTestnet.id:
       return amoyTestnetConfig.custom.tokens.UnrealToken.address;
+
+    case somniaShanonTestnet.id:
+      return somniaShanonTestnetConfig.custom.tokens.UnrealToken.address;
 
     default:
       return "";

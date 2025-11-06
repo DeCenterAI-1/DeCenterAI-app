@@ -141,6 +141,7 @@ export async function signAndRegisterAccount(
         calls: parseCalls(balance),
         paymentToken: unrealPaymentToken,
         sub: UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
+        chain_id: chainId
       };
 
       const jsonPayload = JSON.stringify(payload);

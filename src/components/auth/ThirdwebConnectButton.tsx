@@ -7,6 +7,8 @@ import {
   torusMainnetConfig,
   amoyTestnet,
   amoyTestnetConfig,
+  somniaShanonTestnet,
+  somniaShanonTestnetConfig,
 } from "@/utils/chains";
 import React from "react";
 import { ConnectButton } from "thirdweb/react";
@@ -49,6 +51,14 @@ export function ThirdwebConnectButton() {
             address: amoyTestnetConfig.custom.tokens.UnrealToken.address,
             name: amoyTestnetConfig.custom.tokens.UnrealToken.name,
             symbol: amoyTestnetConfig.custom.tokens.UnrealToken.symbol,
+          },
+        ],
+        [somniaShanonTestnet.id]: [
+          {
+            address:
+              somniaShanonTestnetConfig.custom.tokens.UnrealToken.address,
+            name: somniaShanonTestnetConfig.custom.tokens.UnrealToken.name,
+            symbol: somniaShanonTestnetConfig.custom.tokens.UnrealToken.symbol,
           },
         ],
       }}

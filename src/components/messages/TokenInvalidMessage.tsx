@@ -55,11 +55,11 @@ export default function TokenInvalidMessage({
         </div>
       ) : (
         <div>
-          You do not have a valid Unreal API session token. Please{" "}
+          You do not have a valid Unreal API session token. Click{" "}
           <button
             onClick={refreshSessionToken}
             disabled={isRefreshing}
-            className="font-semibold underline cursor-pointer text-gray-600 hover:text-gray-400 transition-colors bg-neutral-200 p-1.5 rounded-md"
+            className="font-semibold underline cursor-pointer text-gray-600 hover:text-gray-400 transition-colors bg-neutral-200 p-1.5 rounded-sm"
           >
             Refresh session token
           </button>{" "}

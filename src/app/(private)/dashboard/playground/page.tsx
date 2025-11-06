@@ -42,7 +42,7 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [unrealToken, setUnrealToken] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState("mixtral-8x22b-instruct");
+  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
   const [isUnrealTokenValid, setIsUnrealTokenValid] = useState(true);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
