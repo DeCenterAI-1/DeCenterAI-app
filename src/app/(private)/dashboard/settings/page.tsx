@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useActiveAccount } from "thirdweb/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
+import { logirentBold } from "@/styles/fonts";
 
 export default function SettingsPage() {
   const { updateProfile } = useUser();
@@ -114,7 +115,11 @@ export default function SettingsPage() {
   return (
     <div className="flex-1 bg-[#050505] min-h-screen p-6 sm:p-8">
       <div className="space-y-6">
-        <h1 className="text-[#F5F5F5] text-2xl font-bold mb-4">Settings</h1>
+        <h1
+          className={`${logirentBold.className} text-[#F5F5F5] text-2xl font-bold mb-4`}
+        >
+          Settings
+        </h1>
 
         <div className="flex flex-col gap-6">
           {/* Clickable cards */}
@@ -148,7 +153,9 @@ export default function SettingsPage() {
                 fill="#5D5D5D"
               />
             </svg>
-            <span className="text-[#DADADA] font-medium text-lg">Security - Coming Soon</span>
+            <span className="text-[#DADADA] font-medium text-lg">
+              Security - Coming Soon
+            </span>
           </div>
 
           <div className="flex items-center gap-4 p-5 bg-[#111111] border border-[#232323] rounded-2xl cursor-not-allowed hover:bg-[#191919] transition">
@@ -176,7 +183,9 @@ export default function SettingsPage() {
         <div className={modalClasses}>
           <div className={modalInner}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl sm:text-2xl text-white font-bold">
+              <h2
+                className={`${logirentBold.className} text-xl sm:text-2xl text-white font-bold`}
+              >
                 Edit Profile
               </h2>
               <button

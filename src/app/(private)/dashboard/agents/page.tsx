@@ -18,6 +18,7 @@ import { ApiKeyType } from "@/utils/types";
 import TokenInvalidMessage from "@/components/messages/TokenInvalidMessage";
 import Spinner from "@/components/ui/icons/Spinner";
 import RefreshCW from "@/components/ui/icons/RefreshCW";
+import { logirentBold } from "@/styles/fonts";
 
 export default function AgentsPage() {
   const userAccount = useActiveAccount();
@@ -140,7 +141,11 @@ export default function AgentsPage() {
         {/* Header */}
         <div className="bg-[#050505] border border-[#232323] rounded-t-2xl border-b-0 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h1 className="text-2xl font-normal text-[#F5F5F5]">APIs</h1>
+            <h1
+              className={`${logirentBold.className} text-2xl font-normal text-[#F5F5F5]`}
+            >
+              APIs
+            </h1>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {/* Filter input */}
