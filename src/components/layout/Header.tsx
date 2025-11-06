@@ -6,6 +6,8 @@ import { useUser } from "@/hooks/useUser";
 import { ThirdwebConnectButton } from "../auth/ThirdwebConnectButton";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import UserDropdown from "./UserDropdown";
+import { ArrowFatLinesUpIcon} from "@phosphor-icons/react";
+import { useTopUpModalState } from "@/hooks/useTopUpModalState";
 
 export default function Header() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function Header() {
   const wallet = useActiveWallet();
   const { clearUser } = useUser();
   const { toggleSidebar } = useSidebarState();
+  const { toggleModal } = useTopUpModalState();
 
   return (
     <header className="flex items-center justify-between sm:justify-end h-[88px] bg-[#050505] border-b border-[#191919] px-4 sm:px-6">
@@ -59,6 +62,12 @@ export default function Header() {
           </svg>
         </button> */}
 
+          <button
+            onClick={toggleModal}
+            className="border-1 border-[#5D5D5D] text-sm cursor-pointer px-2 gap-2 text-[#F5F5F5]  flex items-center p-1 ">
+              <ArrowFatLinesUpIcon size={22} />
+
+              Top up</button>
         {/* User Drop Down */}
         <UserDropdown />
         {/* Sign Out Button */}

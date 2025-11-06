@@ -102,15 +102,54 @@ export const amoyTestnetConfig = {
   },
 };
 
+// Hedera Testnet configuration
+export const hederaTestnetConfig = {
+  id: 296,
+  name: "Hedera Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "HBAR",
+    symbol: "HBAR",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://testnet.hashio.io/api"],
+    },
+    public: {
+      http: ["https://testnet.hashio.io/api"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "HashScan",
+      url: "https://hashscan.io/testnet",
+    },
+  },
+  testnet: true,
+  custom: {
+    tokens: {
+      // Add your UnrealToken address on Hedera testnet if you have one
+      // UnrealToken: {
+      //   address: "0x..." as const,
+      //   symbol: "UNREAL",
+      //   name: "Unreal Token",
+      //   decimals: 18,
+      // },
+    },
+  },
+};
+
 export const torusMainnet = defineChain(torusMainnetConfig);
 export const titanAITestnet = defineChain(titanAITestnetConfig);
 export const amoyTestnet = defineChain(amoyTestnetConfig);
+export const hederaTestnet = defineChain(hederaTestnetConfig);
 
 // Map of chain IDs to defined chain objects
 const chainsById = {
   [torusMainnet.id]: torusMainnet,
   [titanAITestnet.id]: titanAITestnet,
   [amoyTestnet.id]: amoyTestnet,
+  [hederaTestnet.id]: hederaTestnet,
 } as const;
 
 // Map of chain IDs to configuration objects
@@ -118,6 +157,7 @@ const chainConfigsById = {
   [torusMainnetConfig.id]: torusMainnetConfig,
   [titanAITestnetConfig.id]: titanAITestnetConfig,
   [amoyTestnetConfig.id]: amoyTestnetConfig,
+  [hederaTestnetConfig.id]: hederaTestnetConfig,
 } as const;
 
 // Function to get chain by ID
@@ -132,11 +172,12 @@ export function getChainConfigById(chainId: number) {
 
 // Control which chain the app uses globally via .env
 const ACTIVE_CHAIN_KEY =
-  (process.env.NEXT_PUBLIC_ACTIVE_CHAIN as
-    | "torusMainnet"
-    | "titanAI"
-    | "amoy"
-    | undefined) ?? "titanAI";
+    (process.env.NEXT_PUBLIC_ACTIVE_CHAIN as
+        | "torusMainnet"
+        | "titanAI"
+        | "amoy"
+        | "hedera"
+        | undefined) ?? "titanAI";
 
 export const chainMap = {
   torusMainnet: {
@@ -150,6 +191,10 @@ export const chainMap = {
   amoy: {
     chain: amoyTestnet,
     config: amoyTestnetConfig,
+  },
+  hedera: {
+    chain: hederaTestnet,
+    config: hederaTestnetConfig,
   },
 } as const;
 

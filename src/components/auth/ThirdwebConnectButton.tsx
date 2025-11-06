@@ -10,7 +10,7 @@ import {
 } from "@/utils/chains";
 import React from "react";
 import { ConnectButton } from "thirdweb/react";
-import { inAppWallet } from "thirdweb/wallets";
+import { inAppWallet, createWallet } from "thirdweb/wallets";
 
 export function ThirdwebConnectButton() {
   const wallets = [
@@ -19,6 +19,9 @@ export function ThirdwebConnectButton() {
         options: ["google", "email"],
       },
     }),
+    createWallet("io.metamask"),
+    createWallet("com.coinbase.wallet"),
+    createWallet("me.rainbow"),
   ];
 
   return (
