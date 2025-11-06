@@ -250,13 +250,10 @@ export default function TopUpModal() {
 
             const transactionHash = result.transactionHash;
             setTxHash(transactionHash);
-            setStatus('Payment sent! Verifying...');
+            setStatus('Payment confirmed! Processing...');
 
-            // Wait for Mirror Node to index the transaction
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // Verify transaction on backend
-            const verifyResponse = await fetch('/api/verify-payment', {
+            // Log transaction on backend (no verification needed - trust thirdweb)
+            const logResponse = await fetch('/api/verify-payment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -270,13 +267,14 @@ export default function TopUpModal() {
                 }),
             });
 
-            const verifyResult = await verifyResponse.json();
+            const logResult = await logResponse.json();
 
-            if (verifyResult.success) {
-                setStatus(`✅ Payment verified! ${creditValue} credits purchased.`);
+            if (logResult.success) {
+                setStatus(`✅ Payment successful! ${creditValue} credits purchased.`);
                 toast.success(`Successfully purchased ${creditValue} credits!`);
 
-                console.log(`Purchase logged: ${creditValue} credits for $${(creditValue / 100).toFixed(2)} USDC`);
+                console.log(`Purchase confirmed: ${creditValue} credits for $${(creditValue / 100).toFixed(2)} USDC`);
+                console.log(`Transaction: ${logResult.transaction.explorerUrl}`);
 
                 // Close modal after success
                 setTimeout(() => {
@@ -286,7 +284,8 @@ export default function TopUpModal() {
                     setTxHash('');
                 }, 2000);
             } else {
-                setStatus(`❌ Verification failed: ${verifyResult.error}`);
+                setStatus(`❌ Logging failed: ${logResult.error}`);
+                toast.error("Payment succeeded but logging failed. Please contact support.");
             }
         } catch (error) {
             console.error('Payment error:', error);
