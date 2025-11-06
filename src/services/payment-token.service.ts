@@ -1,4 +1,5 @@
 import {
+  activeChainConfig,
   amoyTestnet,
   amoyTestnetConfig,
   somniaShanonTestnet,
@@ -27,4 +28,9 @@ export function getPaymentTokenAddress(chainId: number): string {
     default:
       return "";
   }
+}
+
+// Get payment token address of the Active Chain
+export function getActiveChainPaymentTokenAddress(): string {
+  return activeChainConfig.custom.tokens.UnrealToken.address;
 }

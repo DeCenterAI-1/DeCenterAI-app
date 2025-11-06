@@ -10,7 +10,7 @@ import { Account } from "thirdweb/wallets";
 import { fetchTokenBalance } from "./thirdweb.service";
 import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 import { toast } from "react-toastify";
-import { getPaymentTokenAddress } from "./payment-token.service";
+import { getActiveChainPaymentTokenAddress } from "./payment-token.service";
 import { client } from "@/lib/thirdweb";
 import { preparePermitPayload, signPermitPayload } from "./permit.service";
 import { UnrealRegistrationPayload } from "@/utils/types";
@@ -86,7 +86,7 @@ export async function signAndRegisterAccount(
     const userRes = await getUserByWallet(account.address);
     if (!userRes.success) throw new Error("Get user by wallet failed.");
 
-    const unrealPaymentToken = getPaymentTokenAddress(chainId);
+    const unrealPaymentToken = getActiveChainPaymentTokenAddress();
 
     // If user does not have Unreal session token, register to Unreal API and get session token
     if (!userRes.data.unreal_token) {
@@ -141,7 +141,7 @@ export async function signAndRegisterAccount(
         calls: parseCalls(balance),
         paymentToken: unrealPaymentToken,
         sub: UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
-        chain_id: chainId
+        chain_id: chainId,
       };
 
       const jsonPayload = JSON.stringify(payload);

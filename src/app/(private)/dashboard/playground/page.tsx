@@ -159,7 +159,7 @@ export default function PlaygroundPage() {
 
   // --- UI ---
   return (
-    <div className="flex-1 bg-[#050505] min-h-screen">
+    <div className="flex-1 bg-[#050505] min-h-screen p-6 sm:p-8">
       {!isUnrealTokenValid && (
         <TokenInvalidMessage
           account={userAccount}
@@ -168,7 +168,7 @@ export default function PlaygroundPage() {
         />
       )}
 
-      <div className="flex flex-col gap-6 p-4 sm:p-8 max-w-6xl mx-auto">
+      <div className="flex flex-col gap-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-[#050505] border border-[#232323] rounded-2xl">
           <h1
