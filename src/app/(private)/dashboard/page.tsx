@@ -33,8 +33,8 @@ export default function DashboardPage() {
         unrealTokenAddress
       );
       setUnrealBalance(balance.displayValue);
-    } catch (err) {
-      console.error("Error fetching Unreal balance:", err);
+    } catch (error) {
+      console.error("Error fetching Unreal balance:", error);
       toast.error("Failed to fetch Unreal token balance");
     }
   };
@@ -49,8 +49,8 @@ export default function DashboardPage() {
       } else {
         toast.warning(res.message || "Failed to fetch API keys summary");
       }
-    } catch (err) {
-      console.error("Error fetching API key summary:", err);
+    } catch (error) {
+      console.error("Error fetching API key summary:", error);
       toast.error("Failed to fetch API key summary");
     }
   };

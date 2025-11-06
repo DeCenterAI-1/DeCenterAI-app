@@ -30,7 +30,7 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [isUnrealTokenValid, setIsUnrealTokenValid] = useState(true);
 
-  // 🔄 Fetch and sync API keys
+  // Fetch and sync API keys
   const fetchAndSyncApiKeys = async () => {
     if (!userAccount?.address) return;
     setLoading(true);
@@ -76,7 +76,7 @@ export default function AgentsPage() {
     }
   };
 
-  // ➕ Generate a new API Key
+  // Generate a new API Key
   const handleGenerateApi = async () => {
     if (!userAccount?.address) return toast.error("Please connect your wallet");
     if (!apiName.trim()) return toast.error("API name cannot be blank");
@@ -89,20 +89,20 @@ export default function AgentsPage() {
       setIsModalOpen(false);
       setApiName("");
       await fetchAndSyncApiKeys();
-    } catch (err) {
+    } catch (error) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to generate API key"
+        error instanceof Error ? error.message : "Failed to generate API key"
       );
     }
   };
 
-  // 📋 Copy API key
+  // Copy API key
   const handleCopyApiKey = (key: string) => {
     navigator.clipboard.writeText(key);
     toast.success("API key copied!");
   };
 
-  // 🗑 Revoke API key
+  // Revoke API key
   const handleRevokeApiKey = async (key: string) => {
     if (!userAccount?.address) return toast.error("Please connect your wallet");
     try {
@@ -111,9 +111,9 @@ export default function AgentsPage() {
 
       toast.success("API key revoked");
       await fetchAndSyncApiKeys();
-    } catch (err) {
+    } catch (error) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to revoke API key"
+        error instanceof Error ? error.message : "Failed to revoke API key"
       );
     }
   };

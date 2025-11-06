@@ -36,7 +36,7 @@ export default function SignInPage() {
         return;
       }
 
-      console.log("Thirdweb auth successful");
+      console.info("Thirdweb auth successful");
 
       // Fetch or create user in Supabase
       const userRes = await getOrCreateUser(email, address);
@@ -65,7 +65,7 @@ export default function SignInPage() {
       });
 
       // Redirect
-      toast.success("Signed in successfully!");
+      console.info("Signed in successfully!");
       router.push("/dashboard");
     } catch (error) {
       console.error("Unexpected error during sign-in:", error);

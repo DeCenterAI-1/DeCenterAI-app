@@ -71,8 +71,8 @@ export default function PlaygroundPage() {
 
       const history = await fetchChatHistory(id, 5);
       setMessages(history);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to load user or chat history");
     }
   };
@@ -86,8 +86,8 @@ export default function PlaygroundPage() {
       const keys = apiKeysRes.data || [];
       setApiKeys(keys);
       setSelectedApiKey(keys[0]?.api_key || unrealToken || "");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to fetch API keys");
     }
   };
@@ -119,8 +119,8 @@ export default function PlaygroundPage() {
       setInput("");
       const history = await fetchChatHistory(userId!, 5);
       setMessages(history);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to get AI response");
     } finally {
       setLoading(false);
@@ -135,7 +135,8 @@ export default function PlaygroundPage() {
       await deleteAllChatHistory(userId);
       setMessages([]);
       toast.info("Chat history cleared");
-    } catch (err) {
+    } catch (error) {
+      console.error("Error clear chat history", error);
       toast.error("Failed to clear chat history");
     } finally {
       setLoading(false);
