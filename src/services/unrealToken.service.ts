@@ -42,10 +42,10 @@ export async function sendWelcomeTokens(toWallet: string, amount: number) {
       transaction: tx,
     });
 
-    console.log(`✅ Sent ${amount} Unreal tokens to ${toWallet}`);
+    console.log(`Sent ${amount} Unreal tokens to ${toWallet}`);
     return { success: true, txHash: receipt.transactionHash };
   } catch (error) {
-    console.error("❌ Failed to send welcome tokens:", error);
+    console.error("Failed to send welcome tokens:", error);
     return { success: false, message: String(error) };
   }
 }

@@ -18,6 +18,7 @@ import { ApiKeyType } from "@/utils/types";
 import TokenInvalidMessage from "@/components/messages/TokenInvalidMessage";
 import Spinner from "@/components/ui/icons/Spinner";
 import RefreshCW from "@/components/ui/icons/RefreshCW";
+import { logirentBold } from "@/styles/fonts";
 
 export default function AgentsPage() {
   const userAccount = useActiveAccount();
@@ -30,7 +31,7 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(false);
   const [isUnrealTokenValid, setIsUnrealTokenValid] = useState(true);
 
-  // 🔄 Fetch and sync API keys
+  // Fetch and sync API keys
   const fetchAndSyncApiKeys = async () => {
     if (!userAccount?.address) return;
     setLoading(true);
@@ -76,7 +77,7 @@ export default function AgentsPage() {
     }
   };
 
-  // ➕ Generate a new API Key
+  // Generate a new API Key
   const handleGenerateApi = async () => {
     if (!userAccount?.address) return toast.error("Please connect your wallet");
     if (!apiName.trim()) return toast.error("API name cannot be blank");
@@ -89,20 +90,20 @@ export default function AgentsPage() {
       setIsModalOpen(false);
       setApiName("");
       await fetchAndSyncApiKeys();
-    } catch (err) {
+    } catch (error) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to generate API key"
+        error instanceof Error ? error.message : "Failed to generate API key"
       );
     }
   };
 
-  // 📋 Copy API key
+  // Copy API key
   const handleCopyApiKey = (key: string) => {
     navigator.clipboard.writeText(key);
     toast.success("API key copied!");
   };
 
-  // 🗑 Revoke API key
+  // Revoke API key
   const handleRevokeApiKey = async (key: string) => {
     if (!userAccount?.address) return toast.error("Please connect your wallet");
     try {
@@ -111,9 +112,9 @@ export default function AgentsPage() {
 
       toast.success("API key revoked");
       await fetchAndSyncApiKeys();
-    } catch (err) {
+    } catch (error) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to revoke API key"
+        error instanceof Error ? error.message : "Failed to revoke API key"
       );
     }
   };
@@ -127,7 +128,7 @@ export default function AgentsPage() {
   }, [userAccount]);
 
   return (
-    <div className="flex-1 bg-[#191919]/15 p-4 sm:p-8">
+    <div className="flex-1 bg-[#050505] min-h-screen p-6 sm:p-8">
       {!isUnrealTokenValid && (
         <TokenInvalidMessage
           account={userAccount}
@@ -136,11 +137,15 @@ export default function AgentsPage() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto space-y-0">
+      <div className="w-full mx-auto space-y-0">
         {/* Header */}
         <div className="bg-[#050505] border border-[#232323] rounded-t-2xl border-b-0 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h1 className="text-2xl font-normal text-[#F5F5F5]">APIs</h1>
+            <h1
+              className={`${logirentBold.className} text-2xl font-normal text-[#F5F5F5]`}
+            >
+              APIs
+            </h1>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {/* Filter input */}
@@ -185,30 +190,36 @@ export default function AgentsPage() {
 
         {/* List */}
         {loading ? (
-          <Spinner />
+          <div className="flex justify-center items-center">
+            <Spinner />
+          </div>
+        ) : filteredApiKeys.length === 0 ? (
+          <div className="bg-[#080808] border border-[#191919] rounded-b-2xl p-8 text-center text-[#8F8F8F] text-sm">
+            No API keys found. Create your first one to start building with AI.
+          </div>
         ) : (
-          <div className="bg-[#080808] border border-[#191919] rounded-b-2xl p-4 sm:p-6 overflow-x-auto">
-            <div className="flex flex-col gap-4 min-w-[500px]">
+          <div className="bg-[#080808] border border-[#191919] rounded-b-2xl p-4 sm:p-6">
+            <div className="flex flex-col gap-4 w-full">
               {filteredApiKeys.map((key) => (
                 <div
                   key={key.id}
                   className="bg-transparent border border-[#232323] rounded-[20px] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                 >
                   {/* Info */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 flex-1 min-w-0">
-                    <span className="text-[#C1C1C1] text-sm font-medium truncate">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-6 flex-1">
+                    <span className="text-[#C1C1C1] text-sm font-medium break-words">
                       {key.api_name}
                     </span>
-                    <span className="text-[#8F8F8F] text-xs font-medium">
+                    <span className="text-[#8F8F8F] text-xs font-medium whitespace-nowrap">
                       Created:{" "}
                       {key.created_at
                         ? new Date(key.created_at).toLocaleDateString()
                         : ""}
                     </span>
-                    <span className="text-[#8F8F8F] text-xs font-medium">
+                    <span className="text-[#8F8F8F] text-xs font-medium whitespace-nowrap">
                       Calls: {key.calls?.toFixed(2) ?? 0}
                     </span>
-                    <span className="text-[#8F8F8F] text-xs font-medium">
+                    <span className="text-[#8F8F8F] text-xs font-medium whitespace-nowrap">
                       Last Used:{" "}
                       {key.last_used
                         ? new Date(key.last_used).toLocaleDateString()
@@ -217,7 +228,7 @@ export default function AgentsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center justify-end gap-2 sm:gap-3 flex-wrap">
                     <button
                       onClick={() => handleCopyApiKey(key.api_key)}
                       className="bg-[#232323] px-4 py-2 rounded-[20px] text-sm text-[#F5F5F5] hover:bg-[#2B2B2B] transition"

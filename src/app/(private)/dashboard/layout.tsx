@@ -3,6 +3,7 @@
 import { useSyncUserFromThirdweb } from "@/hooks/useSyncUserFromThirdweb";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
+import { useEnsureUnrealAccess } from "@/hooks/useEnsureUnrealAccess";
 
 export default function DashboardLayout({
   children,
@@ -10,8 +11,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isSyncing } = useSyncUserFromThirdweb(); // sync Zustand on load
+  const { isEnsuring } = useEnsureUnrealAccess();
 
-  if (isSyncing) {
+  if (isSyncing || isEnsuring) {
     // While syncing user and wallet state, show loading indicator
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-neutral-400">
