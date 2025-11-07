@@ -6,7 +6,7 @@ export function IconPlayground() {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#5D5D5D"
+      stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
