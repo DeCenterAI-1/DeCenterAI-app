@@ -1,6 +1,7 @@
 "use server";
 
 import { supabase } from "@/lib/supabase";
+import { appUrl } from "@/utils/config";
 
 export async function signUpWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({ email, password });
@@ -26,7 +27,7 @@ export async function signInWithEmail(email: string, password: string) {
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard` },
+    options: { redirectTo: `${appUrl}/dashboard` },
   });
   if (error) {
     console.error("Error Supabase sign-in with google", error);

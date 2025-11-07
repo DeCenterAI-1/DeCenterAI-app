@@ -1,6 +1,10 @@
+"use client";
+
 import { refreshUnrealSessionToken } from "@/services/unrealAuth.service";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { Account } from "thirdweb/wallets";
+import Spinner from "../ui/icons/Spinner";
 
 interface TokenInvalidMessageProps {
   account: Account | undefined;
@@ -13,12 +17,15 @@ export default function TokenInvalidMessage({
   chainId,
   onRefreshSuccess,
 }: TokenInvalidMessageProps) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   async function refreshSessionToken() {
     if (!account || !chainId) {
       toast.error("Wallet not connected");
       return { success: false };
     }
 
+    setIsRefreshing(true);
     try {
       const refreshRes = await refreshUnrealSessionToken(account, chainId);
 
@@ -35,18 +42,30 @@ export default function TokenInvalidMessage({
         error instanceof Error ? error.message : "Refresh session token failed"
       );
       return { success: false };
+    } finally {
+      setIsRefreshing(false);
     }
   }
   return (
     <div className="w-full p-4 bg-red-600 text-white text-center rounded-[20px] mb-4">
-      You do not have a valid Unreal API session token. Please{" "}
-      <span
-        onClick={refreshSessionToken}
-        className="font-semibold underline cursor-pointer"
-      >
-        refresh session token
-      </span>{" "}
-      or contact us.
+      {isRefreshing ? (
+        <div className="flex justify-center items-center gap-2">
+          <Spinner />
+          Refreshing ...
+        </div>
+      ) : (
+        <div>
+          You do not have a valid Unreal API session token. Click{" "}
+          <button
+            onClick={refreshSessionToken}
+            disabled={isRefreshing}
+            className="font-semibold underline cursor-pointer text-gray-600 hover:text-gray-400 transition-colors bg-neutral-200 p-1.5 rounded-sm"
+          >
+            Refresh session token
+          </button>{" "}
+          or contact us.
+        </div>
+      )}
     </div>
   );
 }

@@ -16,6 +16,7 @@ import {
 import { getChatCompletion } from "@/actions/unreal/chat";
 import { getApiKeysByUser } from "@/actions/supabase/api_keys";
 import { BinIcon } from "@/components/ui/icons";
+import { logirentBold } from "@/styles/fonts";
 
 interface ChatMessage {
   id: number;
@@ -42,7 +43,7 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [unrealToken, setUnrealToken] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState("mixtral-8x22b-instruct");
+  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
   const [isUnrealTokenValid, setIsUnrealTokenValid] = useState(true);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
@@ -71,8 +72,8 @@ export default function PlaygroundPage() {
 
       const history = await fetchChatHistory(id, 5);
       setMessages(history);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to load user or chat history");
     }
   };
@@ -86,8 +87,8 @@ export default function PlaygroundPage() {
       const keys = apiKeysRes.data || [];
       setApiKeys(keys);
       setSelectedApiKey(keys[0]?.api_key || unrealToken || "");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to fetch API keys");
     }
   };
@@ -119,8 +120,8 @@ export default function PlaygroundPage() {
       setInput("");
       const history = await fetchChatHistory(userId!, 5);
       setMessages(history);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to get AI response");
     } finally {
       setLoading(false);
@@ -135,7 +136,8 @@ export default function PlaygroundPage() {
       await deleteAllChatHistory(userId);
       setMessages([]);
       toast.info("Chat history cleared");
-    } catch (err) {
+    } catch (error) {
+      console.error("Error clear chat history", error);
       toast.error("Failed to clear chat history");
     } finally {
       setLoading(false);
@@ -157,7 +159,7 @@ export default function PlaygroundPage() {
 
   // --- UI ---
   return (
-    <div className="flex-1 bg-[#050505] min-h-screen">
+    <div className="flex-1 bg-[#050505] min-h-screen p-6 sm:p-8">
       {!isUnrealTokenValid && (
         <TokenInvalidMessage
           account={userAccount}
@@ -166,10 +168,14 @@ export default function PlaygroundPage() {
         />
       )}
 
-      <div className="flex flex-col gap-6 p-4 sm:p-8 max-w-6xl mx-auto">
+      <div className="flex flex-col gap-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-[#050505] border border-[#232323] rounded-2xl">
-          <h1 className="text-[#F5F5F5] text-2xl font-normal">Playground</h1>
+          <h1
+            className={`${logirentBold.className} text-[#F5F5F5] text-2xl font-normal`}
+          >
+            Playground
+          </h1>
 
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex items-center gap-2">

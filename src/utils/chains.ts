@@ -102,15 +102,58 @@ export const amoyTestnetConfig = {
   },
 };
 
+// Somnia Shanon Testnet configuration
+export const somniaShanonTestnetConfig = {
+  id: 50312,
+  name: "Somnia Shanon Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Somnia Testnet Token",
+    symbol: "STT",
+  },
+  rpcUrls: {
+    default: {
+      http: [
+        "https://rpc.ankr.com/somnia_testnet/b538dd90abf174d5a5e91e686b9a0d2bcb80c0531c5d99fe61aa7b2a9720d453",
+      ],
+    },
+    public: {
+      http: [
+        "https://rpc.ankr.com/somnia_testnet/b538dd90abf174d5a5e91e686b9a0d2bcb80c0531c5d99fe61aa7b2a9720d453",
+      ],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Somnia Shanon Explorer",
+      url: "https://shannon-explorer.somnia.network/",
+    },
+  },
+  testnet: true,
+  custom: {
+    maxRPS: 3,
+    tokens: {
+      UnrealToken: {
+        address: "0xd1fB2a15545032a8170370d7eC47C0FC69A00eed" as const,
+        symbol: "UNREAL",
+        name: "Unreal Token",
+        decimals: 18,
+      },
+    },
+  },
+};
+
 export const torusMainnet = defineChain(torusMainnetConfig);
 export const titanAITestnet = defineChain(titanAITestnetConfig);
 export const amoyTestnet = defineChain(amoyTestnetConfig);
+export const somniaShanonTestnet = defineChain(somniaShanonTestnetConfig);
 
 // Map of chain IDs to defined chain objects
 const chainsById = {
   [torusMainnet.id]: torusMainnet,
   [titanAITestnet.id]: titanAITestnet,
   [amoyTestnet.id]: amoyTestnet,
+  [somniaShanonTestnet.id]: somniaShanonTestnet,
 } as const;
 
 // Map of chain IDs to configuration objects
@@ -118,6 +161,7 @@ const chainConfigsById = {
   [torusMainnetConfig.id]: torusMainnetConfig,
   [titanAITestnetConfig.id]: titanAITestnetConfig,
   [amoyTestnetConfig.id]: amoyTestnetConfig,
+  [somniaShanonTestnetConfig.id]: somniaShanonTestnetConfig,
 } as const;
 
 // Function to get chain by ID
@@ -136,7 +180,8 @@ const ACTIVE_CHAIN_KEY =
     | "torusMainnet"
     | "titanAI"
     | "amoy"
-    | undefined) ?? "titanAI";
+    | "somniaShanon"
+    | undefined) ?? "somniaShanon";
 
 export const chainMap = {
   torusMainnet: {
@@ -150,6 +195,10 @@ export const chainMap = {
   amoy: {
     chain: amoyTestnet,
     config: amoyTestnetConfig,
+  },
+  somniaShanon: {
+    chain: somniaShanonTestnet,
+    config: somniaShanonTestnetConfig,
   },
 } as const;
 
