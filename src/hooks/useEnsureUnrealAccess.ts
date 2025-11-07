@@ -7,7 +7,7 @@ import { useActiveAccount } from "thirdweb/react";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import { activeChain } from "@/utils/chains";
-import { getPaymentTokenAddress } from "@/services/payment-token.service";
+import { getActiveChainPaymentTokenAddress } from "@/services/payment-token.service";
 import { fetchTokenBalance } from "@/services/thirdweb.service";
 import { client } from "@/lib/thirdweb";
 
@@ -38,7 +38,7 @@ export function useEnsureUnrealAccess() {
         }
 
         // Check wallet for Unreal tokens before registering
-        const unrealTokenAddress = getPaymentTokenAddress(activeChain.id);
+        const unrealTokenAddress = getActiveChainPaymentTokenAddress();
         const balance = await fetchTokenBalance(
           wallet,
           activeChain,

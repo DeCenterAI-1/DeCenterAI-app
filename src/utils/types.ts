@@ -6,6 +6,7 @@ export interface UnrealRegistrationPayload {
   calls: number;
   paymentToken: string;
   sub: string;
+  chain_id?: number; // chain ID (optional)
 }
 
 export interface UnrealApiKeyResponse {
