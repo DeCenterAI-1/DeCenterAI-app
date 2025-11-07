@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThirdwebProvider } from "thirdweb/react";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastContainer } from "react-toastify";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <ThirdwebProvider>
           {children}
           <Analytics />
+          <SpeedInsights />
           <ToastContainer
             aria-label="Notification"
             position="top-right"
