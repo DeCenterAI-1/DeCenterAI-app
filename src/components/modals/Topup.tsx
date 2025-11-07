@@ -92,6 +92,15 @@ export default function TopUpModal() {
                 `${MIRROR_NODE_URL}/accounts/${accountIdString}/tokens?token.id=${USDC_TOKEN_ID}`
             );
 
+            // Handle 404 - account not indexed yet (normal for fresh wallets)
+            if (response.status === 404) {
+                console.log('Account not found in Mirror Node yet. This is normal for fresh wallets.');
+                setStatus("💡 Your wallet is new. USDC setup required. Click 'Setup USDC' to continue.");
+                setIsAssociated(false);
+                return;
+            }
+
+            // Handle other errors
             if (!response.ok) {
                 throw new Error(`Mirror Node API error: ${response.statusText}`);
             }
@@ -133,6 +142,7 @@ export default function TopUpModal() {
                 contract: htsContract,
                 method: 'function associateToken(address account, address token) external returns (int64)',
                 params: [account.address, USDC_CONTRACT_ADDRESS],
+                gas: BigInt(800_000), // Explicit gas limit for HTS operations
             });
 
             setStatus('Processing USDC setup...');
@@ -169,9 +179,23 @@ export default function TopUpModal() {
             }
         } catch (error) {
             console.error("Error associating token via HTS:", error);
-            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+            // Extract detailed error message
+            let errorMessage = "Unknown error";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (typeof error === 'object' && error !== null) {
+                // Handle blockchain errors that aren't standard Error objects
+                const err = error as unknown as { reason?: string; message?: string; data?: { message?: string } };
+                if (err.reason) errorMessage = err.reason;
+                else if (err.message) errorMessage = err.message;
+                else if (err.data?.message) errorMessage = err.data.message;
+                else errorMessage = JSON.stringify(error);
+            }
+
+            console.error("Detailed error message:", errorMessage);
             setStatus(`Error setting up USDC: ${errorMessage}`);
-            toast.error("Failed to setup USDC token.");
+            toast.error("Failed to setup USDC token. Check console for details.");
             return false;
         }
     }, [account, pollForAssociation]);
@@ -285,7 +309,11 @@ export default function TopUpModal() {
                     setIsAssociated(true);
                     setStatus("✅ Wallet is ready for USDC!");
                 } else if (prepResult.needsAssociation) {
-                    // Backend sent HBAR, now auto-associate via smart wallet
+                    // Backend sent HBAR, wait for it to arrive for gas fees
+                    setStatus('⏳ Waiting for HBAR to arrive for gas fees...');
+                    await new Promise(resolve => setTimeout(resolve, 8000)); // Wait 8 seconds
+
+                    // Now associate token
                     const associated = await associateTokenViaHTS();
                     if (!associated) {
                         setLoading(false);
