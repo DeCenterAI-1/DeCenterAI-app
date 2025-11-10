@@ -102,3 +102,17 @@ export interface ChatHistoryType {
   model: string;
   object: string;
 }
+
+export type PurchaseData = Record<string, unknown>;
+
+export type BillingRecordType = {
+  id: number;
+  user: number;
+  credits: number;
+  amount_usd: number;
+  tx_hash?: string | null;
+  receipt_url?: string | null;
+  purchase_data?: PurchaseData | null;
+  status: "completed" | "pending" | "failed";
+  created_at: string;
+};

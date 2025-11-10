@@ -1,5 +1,5 @@
 import { Invoice } from "@phosphor-icons/react";
 
 export function IconBilling() {
-  return <Invoice size={24} color="#5D5D5D" />;
+  return <Invoice size={24} className="text-inherit" />;
 }

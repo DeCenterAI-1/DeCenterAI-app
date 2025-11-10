@@ -77,10 +77,15 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
             amount={(credits / 100).toString()}
             tokenAddress={"0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"} // USDC on Polygon
             seller={"0x0000000000000000000000000000000000000000"}
-            onSuccess={handleSuccess}
-            onError={(e) => {
-              console.error(e);
-              toast.error("Payment failed or canceled.");
+            onSuccess={(data) => handleSuccess(data)}
+            onError={(error, quote) => {
+              console.error("Payment not success", error);
+              console.info(quote);
+              toast.error("Payment failed or canceled");
+            }}
+            onCancel={(quote) => {
+              console.info("User cancel payment", quote);
+              toast.warn("Topup canceled");
             }}
           />
         </div>
