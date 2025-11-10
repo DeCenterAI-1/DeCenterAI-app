@@ -33,7 +33,7 @@ export function useEnsureUnrealAccess() {
         const unrealToken = userRes.data.unreal_token;
 
         if (unrealToken) {
-          console.debug("Unreal access already registered.");
+          console.info("Unreal access already registered.");
           return;
         }
 

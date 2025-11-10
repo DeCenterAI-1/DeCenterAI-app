@@ -52,7 +52,7 @@ export default function SignInPage() {
           toast.warning("Welcome credits airdrop failed.");
         }
 
-        console.debug("Sending Welcome Token Results", welcomeTokensRes);
+        console.info("Sending Welcome Token Results", welcomeTokensRes.success);
       }
 
       // Store in Zustand
