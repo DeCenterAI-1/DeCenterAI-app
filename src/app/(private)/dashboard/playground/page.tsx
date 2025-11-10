@@ -4,7 +4,7 @@ import { getUserByWallet } from "@/actions/supabase/users";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { useActiveAccount, useActiveWallet } from "thirdweb/react";
-import { models } from "@/utils/models";
+import { fallbackModels } from "@/utils/models";
 import TokenInvalidMessage from "@/components/messages/TokenInvalidMessage";
 import { verifyUnrealSessionToken } from "@/actions/unreal/auth";
 import Spinner from "@/components/ui/icons/Spinner";
@@ -17,6 +17,7 @@ import { getChatCompletion } from "@/actions/unreal/chat";
 import { getApiKeysByUser } from "@/actions/supabase/api_keys";
 import { BinIcon } from "@/components/ui/icons";
 import { logirentBold } from "@/styles/fonts";
+import { getUnrealModels } from "@/actions/unreal/models";
 
 interface ChatMessage {
   id: number;
@@ -43,10 +44,13 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [unrealToken, setUnrealToken] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
+  const [models, setModels] = useState(fallbackModels);
+  const [selectedModel, setSelectedModel] = useState(fallbackModels[0].id);
+  const [loadingModels, setLoadingModels] = useState(true);
   const [isUnrealTokenValid, setIsUnrealTokenValid] = useState(true);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
+  const [loadingApiKeys, setLoadingApiKeys] = useState(true);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const userAccount = useActiveAccount();
@@ -80,6 +84,7 @@ export default function PlaygroundPage() {
 
   // --- Fetch API Keys ---
   const fetchApiKeys = async (userId: number) => {
+    setLoadingApiKeys(true);
     try {
       const apiKeysRes = await getApiKeysByUser(userId);
       if (!apiKeysRes.success) throw new Error("Failed to fetch API keys");
@@ -90,6 +95,8 @@ export default function PlaygroundPage() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch API keys");
+    } finally {
+      setLoadingApiKeys(false);
     }
   };
 
@@ -157,6 +164,34 @@ export default function PlaygroundPage() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Load models dynamically
+  useEffect(() => {
+    const loadModels = async () => {
+      setLoadingModels(true);
+      try {
+        const res = await getUnrealModels();
+
+        if (res.success && res.data.length > 0) {
+          setModels(res.data);
+          setSelectedModel(res.data[0].id); // first model as default
+        } else {
+          console.warn("Using fallback models");
+          setModels(fallbackModels);
+          setSelectedModel(fallbackModels[0].id);
+        }
+      } catch (error) {
+        console.error("Error loading models, using fallback", error);
+        // toast.warn("Failed to load models, using fallback");
+        setModels(fallbackModels);
+        setSelectedModel(fallbackModels[0].id);
+      } finally {
+        setLoadingModels(false);
+      }
+    };
+
+    loadModels();
+  }, []);
+
   // --- UI ---
   return (
     <div className="flex-1 bg-[#050505] min-h-screen p-6 sm:p-8">
@@ -180,36 +215,54 @@ export default function PlaygroundPage() {
           <div className="flex flex-wrap gap-3 items-center">
             <div className="flex items-center gap-2">
               <label className="text-[#C1C1C1] text-sm">Model:</label>
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="h-10 px-3 bg-[#191919] border border-[#232323] rounded-[14px] text-[#8F8F8F] text-sm focus:border-[#494949] outline-none"
-              >
-                {models.map((model) => (
-                  <option key={model.id} value={model.id}>
-                    {model.id}
-                  </option>
-                ))}
-              </select>
+              {loadingModels ? (
+                <div className="flex items-center gap-2">
+                  <Spinner />
+                  <span className="text-[#8F8F8F] text-sm">
+                    Loading models...
+                  </span>
+                </div>
+              ) : (
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                  className="h-10 px-3 bg-[#191919] border border-[#232323] rounded-[14px] text-[#8F8F8F] text-sm focus:border-[#494949] outline-none"
+                >
+                  {models.map((model) => (
+                    <option key={model.id} value={model.id}>
+                      {model.id}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
               <label className="text-[#C1C1C1] text-sm">API Key:</label>
-              <select
-                value={selectedApiKey}
-                onChange={(e) => setSelectedApiKey(e.target.value)}
-                className="h-10 px-3 bg-[#191919] border border-[#232323] rounded-[14px] text-[#8F8F8F] text-sm focus:border-[#494949] outline-none max-w-[180px]"
-              >
-                {apiKeys.length > 0 ? (
-                  apiKeys.map((key) => (
-                    <option key={key.id} value={key.api_key}>
-                      {key.api_name}
-                    </option>
-                  ))
-                ) : (
-                  <option value={unrealToken || ""}>Session Token</option>
-                )}
-              </select>
+              {loadingApiKeys ? (
+                <div className="flex items-center gap-2">
+                  <Spinner />
+                  <span className="text-[#8F8F8F] text-sm">
+                    Loading API keys...
+                  </span>
+                </div>
+              ) : (
+                <select
+                  value={selectedApiKey}
+                  onChange={(e) => setSelectedApiKey(e.target.value)}
+                  className="h-10 px-3 bg-[#191919] border border-[#232323] rounded-[14px] text-[#8F8F8F] text-sm focus:border-[#494949] outline-none max-w-[180px]"
+                >
+                  {apiKeys.length > 0 ? (
+                    apiKeys.map((key) => (
+                      <option key={key.id} value={key.api_key}>
+                        {key.api_name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value={unrealToken || ""}>Session Token</option>
+                  )}
+                </select>
+              )}
             </div>
 
             <button
