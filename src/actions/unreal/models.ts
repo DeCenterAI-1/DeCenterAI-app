@@ -21,6 +21,7 @@ export async function getUnrealModels() {
     const res = await fetch(`${unrealApiUrl}/v1/models`, {
       headers: {
         "Content-Type": "application/json",
+        "User-Agent": "DeCenterAIApp/1.0",
       },
       cache: "no-store",
     });
