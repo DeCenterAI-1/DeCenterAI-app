@@ -6,7 +6,7 @@ function normalizeUrl(url: string | undefined): string {
 
 export const UNREAL_REG_PAYLOAD_CONFIG = {
   UNREAL_OPENAI_ADDRESS: process.env.NEXT_PUBLIC_UNREAL_OPENAI_ADDRESS!,
-  CALLS_INITIAL: 100, // TODO: Number(process.env.NEXT_PUBLIC_UNREAL_CALLS_INITIAL) || 50,
+  CALLS_INITIAL: 50, // TODO: Number(process.env.NEXT_PUBLIC_UNREAL_CALLS_INITIAL) || 50,
   WELCOME_TOKENS: 1000, // TODO: Number(process.env.NEXT_PUBLIC_UNREAL_WELCOME_TOKENS) || 1000,
   EXPIRY_SECONDS: Number(process.env.NEXT_PUBLIC_UNREAL_EXPIRY_SECONDS) || 3600,
 };
