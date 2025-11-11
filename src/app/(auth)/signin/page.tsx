@@ -41,11 +41,16 @@ export default function SignInPage() {
       // Fetch or create user in Supabase
       const userRes = await getOrCreateUser(email, address);
 
+      // Debug log
+      console.debug(
+        `Config: Initial calls: ${UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL}, Welcome tokens: ${UNREAL_REG_PAYLOAD_CONFIG.WELCOME_TOKENS}`
+      );
+
       // Send welcome Unreal Token to new user
       if (userRes.isNewUser) {
         const welcomeTokensRes = await sendWelcomeTokens(
           address,
-          UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL
+          UNREAL_REG_PAYLOAD_CONFIG.WELCOME_TOKENS
         );
 
         if (!welcomeTokensRes.success) {
