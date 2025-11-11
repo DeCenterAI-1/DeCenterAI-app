@@ -23,6 +23,8 @@ export async function getNetworkHealth(): Promise<{
       cache: "no-store",
     });
 
+    console.debug("Network Health response", res);
+
     if (!res.ok) {
       throw new Error(`Failed with status ${res.status}`);
     }

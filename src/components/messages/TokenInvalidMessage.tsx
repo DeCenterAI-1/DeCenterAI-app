@@ -1,7 +1,7 @@
 "use client";
 
 import { refreshUnrealSessionToken } from "@/services/unrealAuth.service";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Account } from "thirdweb/wallets";
 import Spinner from "../ui/icons/Spinner";
@@ -18,6 +18,7 @@ export default function TokenInvalidMessage({
   onRefreshSuccess,
 }: TokenInvalidMessageProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [triedRefreshToken, setTriedRefreshToken] = useState(false); // Whether already tried to refresh session token
 
   async function refreshSessionToken() {
     if (!account || !chainId) {
@@ -46,6 +47,15 @@ export default function TokenInvalidMessage({
       setIsRefreshing(false);
     }
   }
+
+  // Try refresh access token once on mount
+  useEffect(() => {
+    if (!triedRefreshToken && account && chainId) {
+      setTriedRefreshToken(true);
+      refreshSessionToken();
+    }
+  }, [account, chainId]);
+
   return (
     <div className="w-full p-4 bg-red-600 text-white text-center rounded-[20px] mb-4">
       {isRefreshing ? (
