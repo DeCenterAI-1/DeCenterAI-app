@@ -46,6 +46,7 @@ export const createUnrealApiKey = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "User-Agent": "DeCenterAIApp/1.0",
         Authorization: `Bearer ${unrealToken}`,
       },
       body: JSON.stringify({
@@ -139,6 +140,7 @@ export const getAllUnrealApiKeys = async (userWallet: string) => {
       method: "GET",
       headers: {
         Authorization: `Bearer ${unrealToken}`,
+        "User-Agent": "DeCenterAIApp/1.0",
       },
     });
 
@@ -199,6 +201,7 @@ export const deleteApiKey = async (key: string, userWallet: string) => {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${unrealToken}`,
+        "User-Agent": "DeCenterAIApp/1.0",
       },
     });
 

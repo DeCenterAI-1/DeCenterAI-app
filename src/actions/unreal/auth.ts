@@ -32,9 +32,14 @@ export const registerUnrealApiAccess = async (
     // Register to Unreal AI API
     const response = await fetch(`${unrealApiUrl}/v1/auth/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": "DeCenterAIApp/1.0",
+      },
       body,
     });
+
+    console.debug("Unreal registration response", response);
 
     const data = await response.json();
 
@@ -67,8 +72,13 @@ export const verifyUnrealSessionToken = async (
       `${unrealApiUrl}/v1/auth/verify?token=${sessionToken}`,
       {
         method: "GET",
+        headers: {
+          "User-Agent": "DeCenterAIApp/1.0",
+        },
       }
     );
+
+    console.debug("Verify session token response", response);
 
     const data = await response.json();
 
