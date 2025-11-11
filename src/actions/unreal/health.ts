@@ -20,6 +20,9 @@ export async function getNetworkHealth(): Promise<{
   try {
     const res = await fetch(`${unrealApiUrl}/v1/health`, {
       method: "GET",
+      headers: {
+        "User-Agent": "DeCenterAIApp/1.0",
+      },
       cache: "no-store",
     });
 
