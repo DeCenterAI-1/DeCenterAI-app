@@ -69,6 +69,9 @@ export const verifyUnrealSessionToken = async (
       `${unrealApiUrl}/v1/auth/verify?token=${sessionToken}`,
       {
         method: "GET",
+        headers: {
+          "User-Agent": "DeCenterAIApp/1.0",
+        },
       }
     );
 
