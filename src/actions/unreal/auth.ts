@@ -36,6 +36,8 @@ export const registerUnrealApiAccess = async (
       body,
     });
 
+    console.debug("Unreal registration response", response);
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -69,6 +71,8 @@ export const verifyUnrealSessionToken = async (
         method: "GET",
       }
     );
+
+    console.debug("Verify session token response", response);
 
     const data = await response.json();
 
