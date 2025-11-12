@@ -90,8 +90,9 @@ export default function DashboardPage() {
             icon={<CloudArrowDown size={42} className="text-[#5D5D5D]" />}
             details={[
               {
-                label: "",
-                value: "",
+                label: "Wallet",
+                value: wallet?.slice(0, 6) + "..." + wallet?.slice(-4) || "-",
+                fullValue: wallet || "",
               },
             ]}
           />
