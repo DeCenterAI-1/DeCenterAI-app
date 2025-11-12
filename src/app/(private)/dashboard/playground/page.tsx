@@ -323,7 +323,7 @@ export default function PlaygroundPage() {
           ))}
           <div ref={chatEndRef} />
           {loading && (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center my-4">
               <Spinner />
             </div>
           )}
@@ -331,16 +331,21 @@ export default function PlaygroundPage() {
 
         {/* Input */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="text"
+          <textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              e.target.style.height = "auto"; // reset height
+              e.target.style.height = `${e.target.scrollHeight}px`; // grow to fit content
+            }}
             placeholder="Type your message..."
-            className="flex-1 h-12 px-4 bg-[#191919] border border-[#232323] rounded-[14px] text-[#C1C1C1] text-sm outline-none focus:border-[#494949]"
+            rows={1}
+            className="w-full resize-none overflow-hidden px-4 py-3 bg-[#191919] border border-[#232323] rounded-[14px] text-[#C1C1C1] text-sm outline-none focus:border-[#494949] min-h-[48px] max-h-[200px]"
           />
           <button
             onClick={loading ? handleStop : handleSendMessage}
-            className="h-12 px-6 bg-[#232323] rounded-[14px] text-[#F5F5F5] text-sm font-semibold hover:bg-[#2B2B2B] transition disabled:opacity-50 flex items-center justify-center"
+            disabled={!input.trim()}
+            className="h-12 px-6 bg-[#232323] rounded-[14px] text-[#F5F5F5] text-sm font-semibold hover:bg-[#2B2B2B] transition disabled:opacity-50 flex items-center justify-center sm:self-end"
           >
             {loading ? <IconStop /> : "Send"}
           </button>
