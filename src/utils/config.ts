@@ -11,6 +11,8 @@ export const UNREAL_REG_PAYLOAD_CONFIG = {
   EXPIRY_SECONDS: Number(process.env.NEXT_PUBLIC_UNREAL_EXPIRY_SECONDS) || 3600,
 };
 
-export const unrealApiUrl = normalizeUrl(process.env.UNREAL_API_URL);
+export const unrealApiUrl =
+  normalizeUrl(process.env.NEXT_PUBLIC_UNREAL_API_URL) ||
+  "https://openai.ideomind.org";
 
 export const appUrl = normalizeUrl(process.env.NEXT_PUBLIC_APP_URL);
