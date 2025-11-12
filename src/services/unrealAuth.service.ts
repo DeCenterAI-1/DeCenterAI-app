@@ -51,7 +51,7 @@ const checkUnrealBalance = async (
     return {
       sufficient: false,
       balance,
-      message: `You have ${balance.displayValue} credits, please top up at least ${UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL} credits`,
+      message: `Insufficient credits. You have ${balance.displayValue} credits. Please top up at least ${UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL} credits.`,
     };
   }
 
