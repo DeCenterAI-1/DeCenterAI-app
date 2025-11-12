@@ -13,11 +13,12 @@ import {
   fetchChatHistory,
   saveChatMessage,
 } from "@/actions/supabase/chat_history";
-import { getChatCompletion } from "@/actions/unreal/chat";
 import { getApiKeysByUser } from "@/actions/supabase/api_keys";
 import { BinIcon } from "@/components/ui/icons";
 import { logirentBold } from "@/styles/fonts";
 import { getUnrealModels } from "@/actions/unreal/models";
+import IconStop from "@/components/ui/icons/IconStop";
+import { getChatCompletionClient } from "@/services/unrealClient.service";
 
 interface ChatMessage {
   id: number;
@@ -52,6 +53,7 @@ export default function PlaygroundPage() {
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
   const [loadingApiKeys, setLoadingApiKeys] = useState(true);
 
+  const abortControllerRef = useRef<AbortController | null>(null); // Store AbortController
   const chatEndRef = useRef<HTMLDivElement>(null);
   const userAccount = useActiveAccount();
   const userWallet = useActiveWallet();
@@ -108,11 +110,15 @@ export default function PlaygroundPage() {
     }
 
     setLoading(true);
+    const controller = new AbortController(); // Create a new controller
+    abortControllerRef.current = controller;
+
     try {
-      const data = await getChatCompletion(
+      const data = await getChatCompletionClient(
         selectedApiKey,
         selectedModel,
-        input
+        input,
+        controller.signal // Pass the controler signal
       );
       const aiResponse = data.choices?.[0]?.message?.content || "No response";
 
@@ -128,9 +134,30 @@ export default function PlaygroundPage() {
       const history = await fetchChatHistory(userId!, 5);
       setMessages(history);
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to get AI response");
+      if (
+        error instanceof Error &&
+        error.message === "Chat completion request canceled"
+      ) {
+        toast.info(error.message);
+      } else {
+        console.error("Error Chat completion", error);
+        toast.error(
+          `Failed to get AI response. ${
+            error instanceof Error && error.message
+          }`
+        );
+      }
     } finally {
+      setLoading(false);
+      abortControllerRef.current = null; // cleanup
+    }
+  };
+
+  // --- Stop Chat Completion ---
+  const handleStop = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
       setLoading(false);
     }
   };
@@ -312,11 +339,10 @@ export default function PlaygroundPage() {
             className="flex-1 h-12 px-4 bg-[#191919] border border-[#232323] rounded-[14px] text-[#C1C1C1] text-sm outline-none focus:border-[#494949]"
           />
           <button
-            onClick={handleSendMessage}
-            disabled={loading}
+            onClick={loading ? handleStop : handleSendMessage}
             className="h-12 px-6 bg-[#232323] rounded-[14px] text-[#F5F5F5] text-sm font-semibold hover:bg-[#2B2B2B] transition disabled:opacity-50 flex items-center justify-center"
           >
-            {loading ? <Spinner /> : "Send"}
+            {loading ? <IconStop /> : "Send"}
           </button>
         </div>
       </div>
