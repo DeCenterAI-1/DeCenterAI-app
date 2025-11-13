@@ -69,11 +69,20 @@ export default function TokenInvalidMessage({
           <button
             onClick={refreshSessionToken}
             disabled={isRefreshing}
-            className="font-semibold underline cursor-pointer text-gray-600 hover:text-gray-400 transition-colors bg-neutral-200 p-1.5 rounded-sm"
+            className="font-semibold cursor-pointer text-gray-600 hover:text-gray-400 transition-colors bg-neutral-200 p-1.5 rounded-sm"
           >
             Refresh session token
           </button>{" "}
-          or contact us.
+          or{" "}
+          <a
+            href="https://decenterai.com/#contact" // Link to contact us url
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold underline hover:text-gray-400 transition-colors"
+          >
+            contact us
+          </a>
+          .
         </div>
       )}
     </div>
