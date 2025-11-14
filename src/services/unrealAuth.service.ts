@@ -12,7 +12,11 @@ import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 import { toast } from "react-toastify";
 import { getActiveChainPaymentTokenAddress } from "./payment-token.service";
 import { client } from "@/lib/thirdweb";
-import { preparePermitPayload, signPermitPayload } from "./permit.service";
+import {
+  checkPermitApplied,
+  preparePermitPayload,
+  signPermitPayload,
+} from "./permit.service";
 import { UnrealRegistrationPayload } from "@/utils/types";
 import { registerUnrealApiAccess } from "@/actions/unreal/auth";
 
@@ -104,33 +108,60 @@ export async function signAndRegisterAccount(
         return { success: false }; // Allow dashboard access with warning
       }
 
-      // Step 1. Prepare permit payload
+      // Permit allowance
       const amount =
         balance!.value ||
         BigInt(UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL) * BigInt(10 ** 18); // 18 decimals
 
-      const deadline =
-        Math.floor(Date.now() / 1000) +
-        UNREAL_REG_PAYLOAD_CONFIG.EXPIRY_SECONDS;
-
-      const { domain, permitTypes, permitMessage } = await preparePermitPayload(
-        account,
-        defineChain(chainId),
+      // Check existing allowance before signing new permit
+      const allowanceCheck = await checkPermitApplied(
         unrealPaymentToken,
+        account.address,
         UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
         amount,
-        deadline
+        defineChain(chainId)
       );
 
-      // Step 2. Sign permit payload and get permit signature
-      const permitSignature = await signPermitPayload(
-        account,
-        domain,
-        permitTypes,
-        permitMessage
-      );
+      let permitMessage = null;
+      let permitSignature: string | null = null;
 
-      // Step 3. Build and send Unreal registration payload with permit
+      if (allowanceCheck.success && allowanceCheck.reason === "allowance_ok") {
+        console.info(
+          `Existing allowance ${allowanceCheck.allowance} already sufficient, skipping permit`
+        );
+      } else {
+        console.info(`${allowanceCheck.reason} Preparing new permit...`);
+
+        // Prepare permit payload
+        const deadline =
+          Math.floor(Date.now() / 1000) +
+          UNREAL_REG_PAYLOAD_CONFIG.EXPIRY_SECONDS;
+
+        const {
+          domain,
+          permitTypes,
+          permitMessage: permitMsg,
+        } = await preparePermitPayload(
+          account,
+          defineChain(chainId),
+          unrealPaymentToken,
+          UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
+          amount,
+          deadline
+        );
+
+        permitMessage = permitMsg;
+
+        // Sign permit payload and get permit signature
+        permitSignature = await signPermitPayload(
+          account,
+          domain,
+          permitTypes,
+          permitMessage
+        );
+      }
+
+      // Build and send Unreal registration payload, optional with permit
       // Unreal registration payload
       const payload: UnrealRegistrationPayload = {
         iss: account.address,
@@ -147,15 +178,13 @@ export async function signAndRegisterAccount(
       const jsonPayload = JSON.stringify(payload);
       const signature = await account.signMessage({ message: jsonPayload });
 
-      const jsonPermitMessage = JSON.stringify(permitMessage);
-
-      // Step 4. Register Unreal API Accress Token
+      // Register Unreal API Accress Token
       const unrealRegisterRes = await registerUnrealApiAccess(
         jsonPayload,
         account.address,
         signature,
-        jsonPermitMessage,
-        permitSignature
+        permitMessage ? JSON.stringify(permitMessage) : undefined,
+        permitSignature || undefined
       );
 
       // Allow user to the API dashboard but notice that Unreal session token was not generated.
