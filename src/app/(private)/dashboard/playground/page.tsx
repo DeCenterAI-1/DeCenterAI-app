@@ -185,7 +185,7 @@ export default function PlaygroundPage() {
 
   useEffect(() => {
     if (userId) fetchApiKeys(userId);
-  }, [userId]);
+  }, [userId, unrealToken]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
