@@ -2,12 +2,19 @@
 
 import { supabase } from "@/lib/supabase";
 import { getUserByWallet } from "../supabase/users";
-import {
-  ApiKeyError,
-  GetAllApiKeysResponse,
-  UnrealApiKeyResponse,
-} from "@/utils/types";
-import { unrealApiUrl } from "@/utils/config";
+import { GetAllApiKeysResponse, UnrealApiKeyResponse } from "@/utils/types";
+import { unrealClient } from "@/lib/unrealClient";
+
+// Helper functions
+async function getUserAndToken(wallet: string) {
+  const userRes = await getUserByWallet(wallet);
+  if (!userRes.success) throw new Error(userRes.message);
+
+  const user = userRes.data;
+  if (!user.unreal_token) throw new Error("No Unreal session token found");
+
+  return { user, unrealToken: user.unreal_token };
+}
 
 // Generate new Unreal API Key
 export const createUnrealApiKey = async (
@@ -26,43 +33,24 @@ export const createUnrealApiKey = async (
       throw new Error("User wallet and API name are required");
     }
 
-    // Step 2: Get user from Supabase by wallet
-    const userRes = await getUserByWallet(userWallet);
-    if (!userRes.success) {
-      throw new Error(
-        userRes.message || "Failed to retrieve user from Supabase"
-      );
-    }
-    const user = userRes.data;
+    // Get user and unreal token from Supabase by wallet
+    const { user, unrealToken } = await getUserAndToken(userWallet);
 
-    // Step 3: Get unreal_token from user
-    const unrealToken = user.unreal_token;
-    if (!unrealToken) {
-      throw new Error("No Unreal session token found for the user");
-    }
+    // Call POST /v1/keys
+    const res = await unrealClient.post<UnrealApiKeyResponse>(
+      "/v1/keys",
+      { name: apiName },
+      {
+        headers: {
+          Authorization: `Bearer ${unrealToken}`,
+        },
+      }
+    );
 
-    // Step 4: Call POST /v1/keys
-    const response = await fetch(`${unrealApiUrl}/v1/keys`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "DeCenterAIApp/1.0",
-        Authorization: `Bearer ${unrealToken}`,
-      },
-      body: JSON.stringify({
-        name: apiName,
-      }),
-    });
+    // Parse the successful response
+    const data: UnrealApiKeyResponse = res.data;
 
-    if (!response.ok) {
-      const errorData: ApiKeyError = await response.json();
-      throw new Error(errorData.error || "Failed to create API key");
-    }
-
-    // Step 5: Parse the successful response
-    const data: UnrealApiKeyResponse = await response.json();
-
-    // Step 6: Save API key information in supabase api_keys table
+    // Save API key information in supabase api_keys table
     const { data: apiKeyData, error: apiKeyError } = await supabase
       .from("api_keys")
       .insert([
@@ -97,10 +85,7 @@ export const createUnrealApiKey = async (
       },
     };
   } catch (error) {
-    console.error(
-      "Error creating Unreal API key:",
-      error instanceof Error ? error.message : "Unknown error"
-    );
+    console.error("Error creating Unreal API key:", error);
     return {
       success: false,
       message:
@@ -120,48 +105,24 @@ export const getAllUnrealApiKeys = async (userWallet: string) => {
       throw new Error("User wallet is required");
     }
 
-    // Step 1: Get user from Supabase by wallet
-    const userRes = await getUserByWallet(userWallet);
-    if (!userRes.success) {
-      throw new Error(
-        userRes.message || "Failed to retrieve user from Supabase"
-      );
-    }
-    const user = userRes.data;
+    // Get user and unreal token from Supabase by wallet
+    const { unrealToken } = await getUserAndToken(userWallet);
 
-    // Step 2: Get unreal_token from user
-    const unrealToken = user.unreal_token;
-    if (!unrealToken) {
-      throw new Error("No Unreal session token found for the user");
-    }
-
-    // Step 3: Call GET /v1/keys
-    const response = await fetch(`${unrealApiUrl}/v1/keys`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${unrealToken}`,
-        "User-Agent": "DeCenterAIApp/1.0",
-      },
+    // Call GET /v1/keys
+    const res = await unrealClient.get<GetAllApiKeysResponse>("/v1/keys", {
+      headers: { Authorization: `Bearer ${unrealToken}` },
     });
 
-    if (!response.ok) {
-      const errorData: ApiKeyError = await response.json();
-      throw new Error(errorData.error || "Failed to retrieve API keys");
-    }
+    // Parse the successful response
+    const data: GetAllApiKeysResponse = res.data;
 
-    // Step 4: Parse the successful response
-    const data: GetAllApiKeysResponse = await response.json();
-
-    // Step 5: Return the array of keys
+    // Return the array of keys
     return {
       success: true,
       data: data.keys,
     };
   } catch (error) {
-    console.error(
-      "Error getting all Unreal API keys:",
-      error instanceof Error ? error.message : "Unknown error"
-    );
+    console.error("Error getting all Unreal API keys:", error);
     return {
       success: false,
       message:
@@ -181,42 +142,23 @@ export const deleteApiKey = async (key: string, userWallet: string) => {
       throw new Error("API key and user wallet are required");
     }
 
-    // Step 1: Get user from Supabase by wallet
-    const userRes = await getUserByWallet(userWallet);
-    if (!userRes.success) {
-      throw new Error(
-        userRes.message || "Failed to retrieve user from Supabase"
-      );
-    }
-    const user = userRes.data;
+    // Get user and unreal token from Supabase by wallet
+    const { user, unrealToken } = await getUserAndToken(userWallet);
 
-    // Step 2: Get unreal_token from user
-    const unrealToken = user.unreal_token;
-    if (!unrealToken) {
-      throw new Error("No Unreal session token found for the user");
-    }
-
-    // Step 3: Call DELETE /v1/keys/{key}
-    const response = await fetch(`${unrealApiUrl}/v1/keys/${key}`, {
-      method: "DELETE",
+    // Call DELETE /v1/keys/{key}
+    const res = await unrealClient.delete(`/v1/keys/${key}`, {
       headers: {
         Authorization: `Bearer ${unrealToken}`,
-        "User-Agent": "DeCenterAIApp/1.0",
       },
     });
 
-    if (!response.ok) {
-      const errorData: ApiKeyError = await response.json();
-      throw new Error(errorData.error || "Failed to delete API key");
-    }
-
-    // Step 4: Parse the successful response
-    const data = await response.json();
+    // Parse the successful response
+    const data = res.data;
     if (!data.deleted) {
       throw new Error("API key deletion was not confirmed by Unreal API");
     }
 
-    // Step 5: Delete the API key from Supabase api_keys table
+    // Delete the API key from Supabase api_keys table
     const { error: deleteError } = await supabase
       .from("api_keys")
       .delete()
@@ -233,10 +175,7 @@ export const deleteApiKey = async (key: string, userWallet: string) => {
       success: true,
     };
   } catch (error) {
-    console.error(
-      "Error deleting Unreal API key:",
-      error instanceof Error ? error.message : "Unknown error"
-    );
+    console.error("Error deleting Unreal API key:", error);
     return {
       success: false,
       message:
