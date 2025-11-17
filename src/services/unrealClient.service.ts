@@ -15,6 +15,7 @@ export async function getChatCompletionClient(
   console.debug("Unreal API Url", unrealApiUrl);
 
   try {
+    // Chat Completion must stay in fetch — browser forbids Axios from setting required headers
     const response = await fetch(`${unrealApiUrl}/v1/chat/completions`, {
       method: "POST",
       headers: {
