@@ -1,6 +1,6 @@
 "use server";
 
-import { unrealApiUrl } from "@/utils/config";
+import { unrealClient } from "@/lib/unrealClient";
 
 export interface UnrealModel {
   id: string;
@@ -10,35 +10,14 @@ export interface UnrealModel {
   aliases?: string[];
 }
 
-interface UnrealModelsResponse {
-  object: string;
-  data: UnrealModel[];
-}
-
 // Fetch available Unreal models
 export async function getUnrealModels() {
   try {
-    const res = await fetch(`${unrealApiUrl}/v1/models`, {
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "DeCenterAIApp/1.0",
-      },
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      console.error(
-        "Failed to fetch Unreal models:",
-        res.status,
-        await res.text()
-      );
-      throw new Error(`Unreal API returned ${res.status}`);
-    }
-
-    const data: UnrealModelsResponse = await res.json();
+    const res = await unrealClient.get("/v1/models");
 
     // Default empty array safeguard in case the API shape changes
-    const models = Array.isArray(data.data) ? data.data : [];
+    const rawData = res.data?.data ?? [];
+    const models = Array.isArray(rawData) ? rawData : [];
 
     // Filter only models that support chat
     const chatModels = models.filter((m) => m.capabilities?.chat === true);
