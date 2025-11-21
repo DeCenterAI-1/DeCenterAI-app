@@ -30,7 +30,9 @@ export const registerUnrealApiAccess = async (
     console.debug("Unreal registration payload", body);
 
     // Register to Unreal AI API
-    const res = await unrealClient.post("/v1/auth/register", body);
+    const res = await unrealClient.post("/v1/auth/register", body, {
+      timeout: 60000, // Registration may take longer
+    });
 
     console.debug(
       "Unreal registration response",
