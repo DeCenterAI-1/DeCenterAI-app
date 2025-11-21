@@ -4,9 +4,10 @@ import { getContract, prepareContractCall, sendTransaction } from "thirdweb";
 import { privateKeyToAccount } from "thirdweb/wallets";
 import { client } from "@/lib/thirdweb";
 import { activeChain, activeChainConfig } from "@/utils/chains";
+import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 
 // Load private key of your treasury wallet
-const treasuryPrivateKey = process.env.TREASURY_PRIVATE_KEY!;
+const treasuryPrivateKey = UNREAL_REG_PAYLOAD_CONFIG.TREASURY_PRIVATE_KEY;
 const account = privateKeyToAccount({
   client,
   privateKey: treasuryPrivateKey,
