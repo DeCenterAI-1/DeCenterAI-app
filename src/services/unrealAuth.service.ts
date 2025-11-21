@@ -14,6 +14,7 @@ import { getActiveChainPaymentTokenAddress } from "./payment-token.service";
 import { client } from "@/lib/thirdweb";
 import {
   checkPermitApplied,
+  executePermitWithRelayer,
   preparePermitPayload,
   signPermitPayload,
 } from "./permit.service";
@@ -159,6 +160,21 @@ export async function signAndRegisterAccount(
           permitTypes,
           permitMessage
         );
+
+        // ExecutePermitWithRelayer
+        if (permitSignature) {
+          const executePermitRes = await executePermitWithRelayer(
+            permitSignature,
+            account.address,
+            defineChain(chainId),
+            unrealPaymentToken,
+            UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
+            amount,
+            deadline
+          );
+
+          console.debug("Execute Permit", executePermitRes);
+        }
       }
 
       // Build and send Unreal registration payload, optional with permit
