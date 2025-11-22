@@ -10,6 +10,7 @@ export const UNREAL_REG_PAYLOAD_CONFIG = {
   WELCOME_TOKENS: 1000, // TODO: Number(process.env.NEXT_PUBLIC_UNREAL_WELCOME_TOKENS) || 1000,
   EXPIRY_SECONDS: Number(process.env.NEXT_PUBLIC_UNREAL_EXPIRY_SECONDS) || 3600,
   TREASURY_PRIVATE_KEY: process.env.NEXT_PUBLIC_TREASURY_PRIVATE_KEY!,
+  MAX_API_KEYS: Number(process.env.NEXT_PUBLIC_MAX_API_KEYS) || 10, // Maximum number of API keys per user
 };
 
 export const unrealApiUrl =
