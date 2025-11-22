@@ -1,13 +1,17 @@
 "use server";
 
-import { getContract, prepareContractCall, sendTransaction } from "thirdweb";
+import {
+  Chain,
+  getContract,
+  prepareContractCall,
+  sendTransaction,
+} from "thirdweb";
 import { privateKeyToAccount } from "thirdweb/wallets";
 import { client } from "@/lib/thirdweb";
 import { activeChain, activeChainConfig } from "@/utils/chains";
-import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 
 // Load private key of your treasury wallet
-const treasuryPrivateKey = UNREAL_REG_PAYLOAD_CONFIG.TREASURY_PRIVATE_KEY;
+const treasuryPrivateKey = process.env.TREASURY_PRIVATE_KEY!;
 const account = privateKeyToAccount({
   client,
   privateKey: treasuryPrivateKey,
@@ -50,5 +54,56 @@ export async function sendWelcomeTokens(toWallet: string, amount: number) {
   } catch (error) {
     console.error("Failed to send welcome tokens:", error);
     return { success: false, message: String(error) };
+  }
+}
+
+export async function executePermitWithRelayer(
+  signature: string,
+  userAddress: string,
+  chain: Chain,
+  tokenAddress: string,
+  spender: string,
+  amount: bigint,
+  deadline: number
+) {
+  try {
+    // split signature into r, s, v
+    const sig = signature.slice(2);
+    const r = "0x" + sig.slice(0, 64);
+    const s = "0x" + sig.slice(64, 128);
+    let v = Number("0x" + sig.slice(128, 130));
+    if (v < 27) v += 27;
+
+    // Load contract
+    const contract = getContract({
+      client,
+      address: tokenAddress,
+      chain,
+    });
+
+    // Prepare permit() call
+    const transaction = await prepareContractCall({
+      contract,
+      method:
+        "function permit(address owner,address spender,uint256 value,uint256 deadline,uint8 v,bytes32 r,bytes32 s)",
+      params: [
+        userAddress,
+        spender,
+        amount,
+        BigInt(deadline),
+        v,
+        r as `0x${string}`,
+        s as `0x${string}`,
+      ],
+    });
+
+    // Send tx — relayer pays gas
+    return await sendTransaction({
+      account, // gas payer
+      transaction,
+    });
+  } catch (error) {
+    console.error("Error execute permit:", error);
+    throw error;
   }
 }
