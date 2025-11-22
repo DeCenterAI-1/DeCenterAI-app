@@ -14,12 +14,12 @@ import { getActiveChainPaymentTokenAddress } from "./payment-token.service";
 import { client } from "@/lib/thirdweb";
 import {
   checkPermitApplied,
-  executePermitWithRelayer,
   preparePermitPayload,
   signPermitPayload,
 } from "./permit.service";
 import { UnrealRegistrationPayload } from "@/utils/types";
 import { registerUnrealApiAccess } from "@/actions/unreal/auth";
+import { executePermitWithRelayer } from "./unrealToken.service";
 
 // Checks whether a given account has a sufficient Unreal Token balance
 const checkUnrealBalance = async (
