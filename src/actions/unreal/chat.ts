@@ -21,7 +21,7 @@ export const getChatCompletion = async (
       },
       {
         headers: { Authorization: `Bearer ${token}` },
-        timeout: 25000, // chat completion may take longer
+        timeout: 60000, // chat completion may take longer
       }
     );
 
