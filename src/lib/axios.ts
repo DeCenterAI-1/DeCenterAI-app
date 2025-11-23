@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from "axios";
 export function createAxiosInstance(baseURL?: string): AxiosInstance {
   const instance = axios.create({
     baseURL,
-    timeout: 15_000, // reasonable default timeout (ms)
+    timeout: 30_000, // reasonable default timeout (ms)
     headers: {
       "Content-Type": "application/json",
       // Do NOT set User-Agent globally here — set per provider client if needed
