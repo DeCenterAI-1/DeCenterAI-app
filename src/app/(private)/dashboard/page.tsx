@@ -6,8 +6,14 @@ import HeroSection from "@/components/dashboard/HeroSection";
 import StatCard from "@/components/dashboard/StatCard";
 import { useUser } from "@/hooks/useUser";
 import { client } from "@/lib/thirdweb";
+import { checkPermitApplied } from "@/services/permit.service";
 import { fetchTokenBalance } from "@/services/thirdweb.service";
-import { getChainConfigById, activeChain } from "@/utils/chains";
+import {
+  getChainConfigById,
+  activeChain,
+  activeChainConfig,
+} from "@/utils/chains";
+import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 import { CloudArrowDown, Key, Pulse } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -33,6 +39,17 @@ export default function DashboardPage() {
         unrealTokenAddress
       );
       setUnrealBalance(balance.displayValue);
+
+      // Check permit allowance
+      const checkPermitResult = await checkPermitApplied(
+        activeChainConfig.custom.tokens.UnrealToken.address,
+        wallet,
+        UNREAL_REG_PAYLOAD_CONFIG.UNREAL_OPENAI_ADDRESS,
+        BigInt(UNREAL_REG_PAYLOAD_CONFIG.CALLS_INITIAL),
+        activeChain
+      );
+
+      console.debug("Check Permit Result", checkPermitResult);
     } catch (error) {
       console.error("Error fetching Unreal balance:", error);
       toast.error("Failed to fetch Unreal token balance");

@@ -19,6 +19,7 @@ import TokenInvalidMessage from "@/components/messages/TokenInvalidMessage";
 import Spinner from "@/components/ui/icons/Spinner";
 import RefreshCW from "@/components/ui/icons/RefreshCW";
 import { logirentBold } from "@/styles/fonts";
+import { UNREAL_REG_PAYLOAD_CONFIG } from "@/utils/config";
 
 export default function AgentsPage() {
   const userAccount = useActiveAccount();
@@ -167,7 +168,17 @@ export default function AgentsPage() {
               </div>
 
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  if (
+                    apiKeys.length >= UNREAL_REG_PAYLOAD_CONFIG.MAX_API_KEYS
+                  ) {
+                    toast.warn(
+                      `You've reached the maximum limit of ${UNREAL_REG_PAYLOAD_CONFIG.MAX_API_KEYS} API keys.`
+                    );
+                    return;
+                  }
+                  setIsModalOpen(true);
+                }}
                 className="bg-[#232323] text-[#F5F5F5] px-5 py-2 rounded-[20px] font-semibold text-sm sm:text-base hover:bg-[#2B2B2B] transition"
               >
                 Generate API

@@ -25,6 +25,14 @@ type EIP712Types = {
   Permit: { name: string; type: string }[];
 };
 
+interface CheckPermitResult {
+  success: boolean;
+  reason: string;
+  allowance?: string;
+  nonce?: string;
+  error?: string;
+}
+
 // Prepare permit payload
 export async function preparePermitPayload(
   account: Account,
@@ -118,5 +126,58 @@ export async function signPermitPayload(
     console.error("Error in sign permit payload:", error);
     toast.error("Failed to sign permit payload");
     throw error;
+  }
+}
+
+// Check whether a permit (ERC20 allowance) has been successfully applied
+export async function checkPermitApplied(
+  tokenAddress: string,
+  owner: string,
+  spender: string,
+  requiredAmount: string | bigint,
+  chain: Chain
+): Promise<CheckPermitResult> {
+  try {
+    const contract = getContract({ client, address: tokenAddress, chain });
+
+    // Check current allowance
+    const allowance = await readContract({
+      contract,
+      method:
+        "function allowance(address owner, address spender) view returns (uint256)",
+      params: [owner, spender],
+    });
+
+    if (BigInt(allowance) >= BigInt(requiredAmount)) {
+      return {
+        success: true,
+        reason: "allowance_ok",
+        allowance: allowance.toString(),
+      };
+    }
+
+    // Fallback: check nonce increase (if you have stored nonceBefore)
+    const nonce = await readContract({
+      contract,
+      method: "function nonces(address) view returns (uint256)",
+      params: [owner],
+    });
+
+    return {
+      success: false,
+      reason: "insufficient_allowance",
+      allowance: allowance.toString(),
+      nonce: nonce.toString(),
+    };
+  } catch (error) {
+    console.error("Error checking permit:", error);
+    return {
+      success: false,
+      reason: "error",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown error checking permit status",
+    };
   }
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { unrealApiUrl } from "@/utils/config";
+import { unrealClient } from "@/lib/unrealClient";
 
 export interface NetworkHealth {
   status: string;
@@ -18,23 +18,17 @@ export async function getNetworkHealth(): Promise<{
   message?: string;
 }> {
   try {
-    const res = await fetch(`${unrealApiUrl}/v1/health`, {
-      method: "GET",
-      headers: {
-        "User-Agent": "DeCenterAIApp/1.0",
-      },
-      cache: "no-store",
-    });
+    const res = await unrealClient.get("/v1/health");
 
-    console.debug("Network Health response", res);
+    console.debug(
+      "Network Health response",
+      res.data,
+      res.status,
+      res.statusText
+    );
 
-    if (!res.ok) {
-      throw new Error(`Failed with status ${res.status}`);
-    }
-
-    const data: NetworkHealth = await res.json();
-
-    return { success: true, data };
+    // axios treats non-2xx as rejected, so here res.status is 2xx
+    return { success: true, data: res.data as NetworkHealth };
   } catch (error) {
     console.error("Error Get Network Health:", error);
     return {
