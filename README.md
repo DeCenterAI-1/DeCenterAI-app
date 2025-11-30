@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DeCenter AI App
 
-## Getting Started
+A Next.js + TypeScript application that provides authentication, API key management, Playground UI, and user profile settings for interacting with the Unreal / IdeoMind API.
 
-First, run the development server:
+This app serves as the frontend for developers using DeCenter AI, giving them a dashboard where they can:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Passwordless sign-in
+- Generate & revoke API keys
+- Test models in the Playground
+
+## Tech Stack
+| Area | Technology |
+| -----| -----------|
+| Framework |	Next.js (App Router) |
+| Language | TypeScript |
+| Authentication & Web3 Library | Thirdweb |
+| API Integration |	Unreal API: [https://docs.ideomind.org/openai/v1](https://docs.ideomind.org/) |
+| Style |	Tailwind CSS |
+| Database |	Supabase (Postgres) |
+| Deployment | Vercel |
+
+## Features
+1. User Authentication
+2. API Key Management
+3. Playground
+4. Profile Settings
+
+## Unreal API Integration
+The app fully uses Unreal’s API:
+Docs: [https://docs.ideomind.org/openai/v1](https://docs.ideomind.org/)
+
+Implemented:
+
+- Register for API access
+- Verify API token
+- Get all API keys
+- Create API key
+- Delete API key
+- List models
+- Create chat completion
+- Health check
+
+## Project Structure
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+│ middleware.ts
+│ .env
+│
+│ ├──src/
+│   ├── actions/
+│
+│   ├── app/
+│     ├── layout.tsx              # Root layout & providers
+│     ├── page.tsx                # Home
+│     ├── (auth)/                 # Authentication pages
+│     ├── (private)/              # Private routes e.g Dashboard
+│     └── api/                    # Internal Next.js API routes
+│
+│   ├── components/                 
+│                        
+│   ├── hooks/                 
+│
+│   ├── lib/ 
+│
+│   ├── services/
+│
+│   ├── styles/
+│
+│   ├── utils/
+│  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Getting Started
+1. Install dependencies
+```bash
+npm install
+```
 
-## Learn More
+2. Create .env.local
+```
+Copy .env.example and fill with environment variables
+```
 
-To learn more about Next.js, take a look at the following resources:
+3. Run Dev Server
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Open http://localhost:3000
