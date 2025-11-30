@@ -44,7 +44,7 @@ Implemented:
 ```
 
 │ middleware.ts
-│ .env
+│ .env.local
 │
 │ ├──src/
 │   ├── actions/
