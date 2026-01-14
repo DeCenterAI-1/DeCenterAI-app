@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { client } from "@/lib/thirdweb";
 import { getUserByEmail } from "@/actions/supabase/users";
-import { getUserEmail } from "thirdweb/wallets";
+import { getUser } from "thirdweb/wallets";
 import { useActiveAccount } from "thirdweb/react";
 
 export function useSyncUserFromThirdweb() {
@@ -17,14 +17,24 @@ export function useSyncUserFromThirdweb() {
     setIsSyncing(true);
     try {
       // Get user email and wallet address from Thirdweb
-      const email = await getUserEmail({ client });
       const wallet = account?.address;
 
-      if (!email || !wallet) {
+      if (!wallet) {
         clearUser();
         setIsSyncing(false);
         return;
       }
+
+      const thirdwebUser = await getUser({ client, walletAddress: wallet });
+
+      if (!thirdwebUser) {
+        clearUser();
+        setIsSyncing(false);
+        return;
+      }
+
+      const email =
+        thirdwebUser.email || `guest_${wallet.toLowerCase()}@decenterai.com`;
 
       // Fetch user info from Supabase
       const userRes = await getUserByEmail(email);

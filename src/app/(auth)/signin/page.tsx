@@ -29,12 +29,14 @@ export default function SignInPage() {
     try {
       // Fetch user identity from Thirdweb
       const user = await fetchUserFromThirdWeb(client, address || "");
-      const email = user?.email;
 
-      if (!email) {
-        console.error("Unable to retrieve email");
+      if (!user) {
+        console.error("Unable to retrieve Thirdweb user");
         return;
       }
+
+      const email =
+        user?.email || `guest_${address.toLowerCase()}@decenterai.com`;
 
       console.info("Thirdweb auth successful");
 

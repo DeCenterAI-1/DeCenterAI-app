@@ -8,7 +8,7 @@ export function ThirdwebConnectButton() {
   const wallets = [
     inAppWallet({
       auth: {
-        options: ["google", "email"],
+        options: ["google", "email", "guest"],
       },
     }),
   ];
